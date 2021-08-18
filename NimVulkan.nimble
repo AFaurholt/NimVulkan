@@ -11,4 +11,4 @@ bin           = @["NimVulkan"]
 # Dependencies
 
 requires "nim >= 1.5.1"
-requires "nimgl >= 1.1.10"
+requires "nimgl >= 1.2.0"

@@ -104,26 +104,40 @@ proc main() =
 
   var 
     deviceResponse: string
-    queueFamResponse: string
-    queueCountResponse: string
   discard readLineFromStdin("Pick device:", deviceResponse)
-  discard readLineFromStdin("Pick queue family:", queueFamResponse)
-  discard readLineFromStdin("Pick queue count:", queueCountResponse)
 
   var deviceQueueCreateInfo: VkDeviceQueueCreateInfo = VkDeviceQueueCreateInfo(
     sType: VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO
     , pNext: nil
     , flags: VkDeviceQueueCreateFlags 0
-    , queueFamilyIndex: uint32 queueFamResponse.parseUInt
-    , queueCount: uint32 queueCountResponse.parseUint
+    , queueFamilyIndex: 0
+    , queueCount: 1
     , pQueuePriorities: nil)
 
-  # var deviceCreateInfo: VkDeviceCreateInfo =
+  var requiedFeatures: VkPhysicalDeviceFeatures = VkPhysicalDeviceFeatures(
+    multiDrawIndirect: VkBool32 true
+    , tessellationShader: VkBool32 true
+    , geometryShader: VkBool32 true
+  )
+  var deviceCreateInfo: VkDeviceCreateInfo = VkDeviceCreateInfo(
+    sType: VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO
+    , pNext: nil
+    , flags: VkDeviceCreateFlags 0
+    , pQueueCreateInfos: addr deviceQueueCreateInfo
+    , queueCreateInfoCount: 1
+    , enabledLayerCount: 0
+    , ppEnabledLayerNames: nil
+    , enabledExtensionCount: 0
+    , ppEnabledExtensionNames: nil
+    , pEnabledFeatures: addr requiedFeatures
+  )
   
-
-  # doAssert vkCreateDevice(
-  #   physicalDevice: physicalDevices[deviceResponse.parseUInt]
-  #   , pCreateInfo: )
+  var logicalDevice: VkDevice
+  doAssert vkCreateDevice(
+    physicalDevices[deviceResponse.parseUInt]
+    , addr deviceCreateInfo
+    , nil
+    , addr logicalDevice) == VK_SUCCESS
 
   # var seqDeviceQueueCreateInfo: seq[VkDeviceQueueCreateInfo] = @[deviceQueueCreateInfo]
   # var deviceCreateInfo: VkDeviceCreateInfo =
